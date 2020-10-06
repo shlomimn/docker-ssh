@@ -1,0 +1,22 @@
+FROM centos
+RUN yum -y update
+RUN yum install -y openssh-server
+
+# Usage: useradd [options]
+# -r, --system                  create a system account
+# -m, --create-home             create the user's home directory
+# -d, --home-dir HOME_DIR       home directory of the new account
+# -s, --shell SHELL             login shell of the new account
+# -g, --gid GROUP               name or ID of the primary group of the new account
+# -G, --groups GROUPS           list of supplementary groups of the new account
+# -u, --uid UID                 user ID of the new account
+RUN useradd -rm -d /home/centos -s /bin/bash -g root -G wheel -u 1000 test
+
+RUN ssh-keygen -A
+ADD ./sshd_config /etc/ssh/sshd_config
+
+RUN echo 'test:test' | chpasswd
+CMD ["/usr/sbin/sshd","-D"]
+
+
+
